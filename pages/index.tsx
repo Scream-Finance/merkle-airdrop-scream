@@ -43,17 +43,10 @@ export default function Home() {
         <p>{description}</p>
 
         <p>
-          By participating in this compensation plan I waive any and all claims,
-          that I may have against DEUS Finance & Scream team arising out of my
-          SCREAM deposits made on{" "}
-          <a
-            href="https://v1.scream.sh"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            v1.scream.sh
-          </a>
-          .
+          By participating in this compensation plan I waive any and all claims
+          that I may have against DEUS Finance & Scream team arising from
+          deposits made to Scream&apos;s v1 markets, whose comptroller is set to
+          0x260E596DAbE3AFc463e75B6CC05d8c46aCAcFB09.
         </p>
 
         {/* Claim button */}
