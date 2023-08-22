@@ -42,6 +42,20 @@ export default function Home() {
         {/* Project description */}
         <p>{description}</p>
 
+        <p>
+          By participating in this compensation plan I waive any and all claims,
+          that I may have against DEUS Finance & Scream team arising out of my
+          SCREAM deposits made on{" "}
+          <a
+            href="https://v1.scream.sh"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            v1.scream.sh
+          </a>
+          .
+        </p>
+
         {/* Claim button */}
         {!address ? (
           // If not authenticated, disabled
