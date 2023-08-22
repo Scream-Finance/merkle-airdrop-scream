@@ -3,6 +3,8 @@ import { eth } from "state/eth"; // State container
 import Layout from "components/Layout"; // Layout wrapper
 import { useRouter } from "next/router"; // Routing
 import styles from "styles/pages/Home.module.scss"; // Page styles
+import { useConnectWallet } from "@web3-onboard/react";
+import { useMemo } from "react";
 
 // Setup project details
 const tokenName: string = process.env.NEXT_PUBLIC_TOKEN_NAME ?? "Token Name";
@@ -14,7 +16,12 @@ export default function Home() {
   // Routing
   const { push } = useRouter();
   // Authentication status
-  const { address }: { address: string | null } = eth.useContainer();
+  // const { address }: { address: string | null } = eth.useContainer();
+  const [{ wallet }] = useConnectWallet();
+  const address = useMemo(
+    () => wallet?.accounts[0].address,
+    [wallet?.accounts]
+  );
 
   return (
     <Layout>
@@ -43,17 +50,10 @@ export default function Home() {
         <p>{description}</p>
 
         <p>
-          By participating in this compensation plan I waive any and all claims,
-          that I may have against DEUS Finance & Scream team arising out of my
-          SCREAM deposits made on{" "}
-          <a
-            href="https://v1.scream.sh"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            v1.scream.sh
-          </a>
-          .
+          By participating in this compensation plan I waive any and all claims
+          that I may have against DEUS Finance & Scream team arising from
+          deposits made to Scream&apos;s v1 markets, whose comptroller is set to
+          0x260E596DAbE3AFc463e75B6CC05d8c46aCAcFB09.
         </p>
 
         {/* Claim button */}

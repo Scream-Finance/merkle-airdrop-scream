@@ -1,7 +1,21 @@
-import React from "react";
 import "styles/global.scss"; // Global styles
-import StateProvider from "state"; // Global state provider
 import type { AppProps } from "next/app"; // Types
+import { Web3OnboardProvider, init } from "@web3-onboard/react";
+import injectedModule from "@web3-onboard/injected-wallets";
+import StateProvider from "state";
+
+const fantom = {
+  id: "0xfa",
+  token: "FTM",
+  label: "Fantom",
+  rpcUrl: "https://rpc.ftm.tools",
+};
+const chains = [fantom];
+const wallets = [injectedModule()];
+const web3Onboard = init({
+  wallets,
+  chains,
+});
 
 // Export application
 export default function MerkleAirdropStarter({
@@ -9,9 +23,10 @@ export default function MerkleAirdropStarter({
   pageProps,
 }: AppProps) {
   return (
-    // Wrap application in global state provider
-    <StateProvider>
-      <Component {...pageProps} />
-    </StateProvider>
+    <Web3OnboardProvider web3Onboard={web3Onboard}>
+      <StateProvider>
+        <Component {...pageProps} />
+      </StateProvider>
+    </Web3OnboardProvider>
   );
 }

@@ -3,8 +3,9 @@ import { eth } from "state/eth"; // ETH state provider
 import { ethers } from "ethers"; // Ethers
 import keccak256 from "keccak256"; // Keccak256 hashing
 import MerkleTree from "merkletreejs"; // MerkleTree.js
-import { useEffect, useState } from "react"; // React
+import { useEffect, useMemo, useState } from "react"; // React
 import { createContainer } from "unstated-next"; // State management
+import { useConnectWallet } from "@web3-onboard/react";
 
 /**
  * Generate Merkle Tree leaf from address and value
@@ -38,13 +39,16 @@ const merkleTree = new MerkleTree(
 
 function useToken() {
   // Collect global ETH state
-  const {
-    address,
-    provider,
-  }: {
-    address: string | null;
-    provider: ethers.providers.Web3Provider | null;
-  } = eth.useContainer();
+  const [{ wallet }] = useConnectWallet();
+  const address = useMemo(
+    () => wallet?.accounts[0]?.address,
+    [wallet?.accounts]
+  );
+  const ethersProvider = useMemo(() => {
+    return wallet
+      ? new ethers.providers.Web3Provider(wallet?.provider, "any")
+      : null;
+  }, [wallet]);
 
   // Local state
   const [dataLoading, setDataLoading] = useState<boolean>(true); // Data retrieval status
@@ -66,7 +70,7 @@ function useToken() {
         "function claim(address to, uint256 amount, bytes32[] calldata proof) external",
       ],
       // Get signer from authed provider
-      provider?.getSigner()
+      ethersProvider?.getSigner()
     );
   };
 
@@ -77,8 +81,8 @@ function useToken() {
    */
   const getAirdropAmount = (address: string): number => {
     // If address is in airdrop. convert address to correct checksum
-    address = ethers.utils.getAddress(address)
-    
+    address = ethers.utils.getAddress(address);
+
     if (address in config.airdrop) {
       // Return number of tokens available
       return config.airdrop[address];
@@ -112,7 +116,10 @@ function useToken() {
     const formattedAddress: string = ethers.utils.getAddress(address);
     // Get tokens for address
     const numTokens: string = ethers.utils
-      .parseUnits(config.airdrop[ethers.utils.getAddress(address)].toString(), config.decimals)
+      .parseUnits(
+        config.airdrop[ethers.utils.getAddress(address)].toString(),
+        config.decimals
+      )
       .toString();
 
     // Generate hashed leaf from address
