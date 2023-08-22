@@ -1,13 +1,19 @@
-import { eth } from "state/eth"; // Global state: ETH
-import { useState } from "react"; // State management
+// import { eth } from "state/eth"; // Global state: ETH
+import { useMemo, useState } from "react"; // State management
 import { token } from "state/token"; // Global state: Tokens
 import Layout from "components/Layout"; // Layout wrapper
 import styles from "styles/pages/Claim.module.scss"; // Page styles
+import { useConnectWallet } from "@web3-onboard/react";
 
 export default function Claim() {
   // Global ETH state
-  const { address, unlock }: { address: string | null; unlock: Function } =
-    eth.useContainer();
+  // const { address, unlock }: { address: string | null; unlock: Function } = eth.useContainer();
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const address = useMemo(
+    () => wallet?.accounts[0].address,
+    [wallet?.accounts]
+  );
+
   // Global token state
   const {
     dataLoading,
@@ -40,7 +46,7 @@ export default function Claim() {
           <div className={styles.card}>
             <h1>You are not authenticated.</h1>
             <p>Please connect with your wallet to check your airdrop.</p>
-            <button onClick={() => unlock()}>Connect Wallet</button>
+            <button onClick={() => connect()}>Connect Wallet</button>
           </div>
         ) : dataLoading ? (
           // Loading details about address
